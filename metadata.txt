@@ -1,0 +1,4 @@
+displayname=Loadson Mod Repository
+author=devilExE
+description=Automatically update all installed mods which are tracked by this repository\n\n<LMR>v1</LMR>
+deps=
