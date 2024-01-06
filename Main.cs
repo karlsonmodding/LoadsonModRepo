@@ -17,6 +17,8 @@ namespace LoadsonModRepo
 {
     public class Main : Mod
     {
+        private const string REPOSITORY_URL = "https://raw.githubusercontent.com/karlsonmodding/LoadsonModRepo/master/Tracker/repository";
+
         private static Dictionary<string, (string, string)> repository = new Dictionary<string, (string, string)>();
         private const string TAG_OPEN = "<LMR>";
         private const string TAG_CLOSE = "</LMR>";
@@ -32,10 +34,12 @@ namespace LoadsonModRepo
             // download repository
             ServicePointManager.ServerCertificateValidationCallback = new RemoteCertificateValidationCallback(delegate { return true; });
             WebClient wc = new WebClient();
-            string s = wc.DownloadString("https://pastebin.com/raw/pDu6WHPi");
+            string s = wc.DownloadString(REPOSITORY_URL + "?random=" + new System.Random().Next().ToString());
+            Loadson.Console.Log(s);
             var lines = s.Split('\n');
             foreach (var line in lines)
             {
+                if (line.Trim().Split('|').Length != 3) continue; // invalid line
                 var v = line.Trim().Split('|');
                 repository.Add(v[0], (v[1], v[2]));
             }
@@ -46,12 +50,11 @@ namespace LoadsonModRepo
             // because this might lead to unexpected bugs and glitches.
             // It's better to obfuscate behind reflection internal things.
             Type modEntry = typeof(Mod).Assembly.GetType("LoadsonInternal.ModEntry");
-            Loadson.Console.Log(modEntry.FullName);
-            IEnumerable mods = (IEnumerable) modEntry.GetField("List").GetValue(null);
-            foreach(var mod in mods)
+            IEnumerable mods = (IEnumerable)modEntry.GetField("List").GetValue(null);
+            foreach (var mod in mods)
             {
                 string guid = (string)modEntry.GetField("ModGUID").GetValue(mod);
-                if(repository.ContainsKey(guid))
+                if (repository.ContainsKey(guid))
                 {
                     Loadson.Console.Log("Checking " + guid);
                     // this mod is tracked by the repo, check version
@@ -59,7 +62,7 @@ namespace LoadsonModRepo
                     bool update = false;
                     if (!description.Contains(TAG_OPEN) || !description.Contains(TAG_CLOSE))
                     {
-                        description += "\n<color=red>[LMR] Couldn't find version tag, this mod has been force-updated</color>";
+                        description += "\n<color=red>[LMR] Couldn't find version tag, mark as needing update</color>";
                         update = true; // this mod doesn't respect <LMR>version</LMR> format for version tracking, so we update if it's in our repo
                     }
                     else
@@ -91,16 +94,16 @@ namespace LoadsonModRepo
                         {
                             Loadson.Console.Log("<i> </i><color=red>Failed to update.</color>");
                         }
-                        
+
                     }
                 }
                 // TODO: maybe check if mod has LMR tag but is not in repo and alert user
             }
             wc.Dispose();
-            if(updated.Count > 0)
+            if (updated.Count > 0)
             {
                 dialog = "The following mods have been automatically updated:\n";
-                foreach(var m in updated)
+                foreach (var m in updated)
                 {
                     dialog += "- " + m + "\n";
                 }
@@ -112,6 +115,7 @@ namespace LoadsonModRepo
         {
             if (dialog != "")
             {
+                GUI.Box(wir, "");
                 wir = GUI.Window(wid, wir, (_) =>
                 {
                     GUI.Label(new Rect(5, 15, 790, 450), dialog);
@@ -130,7 +134,7 @@ namespace LoadsonModRepo
                         // quit app
                         Application.Quit();
                     }
-                    if (GUI.Button(new Rect(100, 475, 200, 20), "No"))
+                    if (GUI.Button(new Rect(500, 475, 200, 20), "No"))
                     {
                         dialog = "";
                     }

@@ -3,3 +3,5 @@ obj
 lib
 .vs
 exportBundle.cs
+*.klm
+*.klmi

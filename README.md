@@ -2,6 +2,9 @@
 Public mod repository that tracks actively-developend Loadson mods<br>
 This mod automatically updates all of your installed mods that are part of this repository
 
+# Tracker list and repository
+[tracker list](https://raw.githubusercontent.com/karlsonmodding/LoadsonModRepo/master/Tracker/trackers) [repository](https://raw.githubusercontent.com/karlsonmodding/LoadsonModRepo/master/Tracker/repository)
+
 # Add your mod
 Since this repository is public, we want as many community mods as possible.<br>
 Simply open an issue, and you will be instructed on how to add your mod here.
