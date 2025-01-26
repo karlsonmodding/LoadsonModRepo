@@ -54,6 +54,7 @@ namespace LoadsonModRepo
             foreach (var mod in mods)
             {
                 string guid = (string)modEntry.GetField("ModGUID").GetValue(mod);
+                string file = (string)modEntry.GetField("FilePath").GetValue(mod);
                 if (repository.ContainsKey(guid))
                 {
                     Loadson.Console.Log("Checking " + guid);
@@ -86,7 +87,7 @@ namespace LoadsonModRepo
                         // update mod
                         try
                         {
-                            File.WriteAllBytes(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Loadson", "Mods", guid + ".klm"), wc.DownloadData(repository[guid].Item2));
+                            File.WriteAllBytes(file, wc.DownloadData(repository[guid].Item2));
                             updated.Add(guid);
                             Loadson.Console.Log("<i> </i><color=green>Updated.</color>");
                         }
